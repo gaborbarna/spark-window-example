@@ -2,6 +2,8 @@
 
 ## Prerequisites
 
+[sbt][] 0.13.x
+
 [sbt]: http://www.scala-sbt.org/
 
 ## Running
