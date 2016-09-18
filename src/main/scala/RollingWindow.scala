@@ -13,8 +13,7 @@ case class RollingWindow(spark: SparkSession) {
     val w2 = Window.orderBy('T).rangeBetween(-60l, -1l)
     val result1 = selectOverWindow(df, w1)
     val result2 = selectOverWindow(df, w2)
-    val joined = result1.join(result2, result1("RN") === result2("RN"))
-    joined.map {
+    result1.join(result2, result1("RN") === result2("RN")).map {
       case Row(t: Long, v: Double, n1: Long, rs1: Double, minV1: Double, maxV1: Double, _: Int,
         _: Long, _: Double, n2: Long, rs2: Double, minV2: Double, maxV2: Double, _: Int) =>
         ResultRow(t, v, n1 + n2, roundAt5(rs1 + rs2), Math.min(minV1, minV2), Math.max(maxV1, maxV2))
@@ -44,8 +43,8 @@ case class RollingWindow(spark: SparkSession) {
       .withColumn("maxV", when(isnull('maxV), Double.MinValue).otherwise('maxV))
 
   private def roundAt(p: Int)(n: Double) = {
-    val s = math pow (10, p)
-    (math round n * s) / s
+    val s = math.pow(10, p)
+    math.round(n * s) / s
   }
 
   private def roundAt5 = roundAt(5) _
